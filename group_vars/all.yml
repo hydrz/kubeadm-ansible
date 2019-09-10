@@ -25,7 +25,7 @@ network: flannel
 # For example, on DigitalOcean, you would use eth1 as that is the default private network interface.
 network_interface: "eth1"
 
-enable_dashboard: yes
+enable_dashboard: no
 
 systemd_dir: /lib/systemd/system
 system_env_dir: /etc/sysconfig
@@ -35,9 +35,9 @@ kube_addon_dir: /etc/kubernetes/addon
 
 # Additional feature to install
 additional_features:
-  helm: yes
-  metallb: yes
-  healthcheck: yes
+  helm: no
+  metallb: no
+  healthcheck: no
 
 # temporary directory used by additional features
 tmp_dir: /tmp/kubeadm-ansible-files
