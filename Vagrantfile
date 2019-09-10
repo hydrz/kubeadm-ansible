@@ -20,24 +20,24 @@ Vagrant.configure("2") do |config|
   master = 1
   node = 2
 
-  private_count = 10
+  private_count = 10 + master + node - 1
   (1..(master + node)).each do |mid|
-    name = (mid <= master) ? "m" : "n"
-    id   = (mid <= master) ? mid : (mid - master)
+    name = (mid <= node) ? "n" : "m"
+    id   = (mid <= node) ? mid : (mid - node)
 
     config.vm.define "k8s-#{name}#{id}" do |n|
       n.vm.hostname = "k8s-#{name}#{id}"
-      ip_addr = "192.16.15.#{private_count}"
+      ip_addr = "192.168.15.#{private_count}"
       n.vm.network :private_network, ip: "#{ip_addr}",  auto_config: true
 
       n.vm.provider :virtualbox do |vb, override|
         vb.name = "#{n.vm.hostname}"
         set_vbox(vb, override)
       end
-      private_count += 1
+      private_count -= 1
     end
   end
 
   # Install of dependency packages using script
-  config.vm.provision :shell, path: "./hack/setup-vms.sh"
+  config.vm.provision :shell, inline: "sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config &&  systemctl restart sshd"
 end

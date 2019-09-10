@@ -3,6 +3,7 @@
   gather_facts: yes
   become: yes
   roles:
+    - { role: commons/environment, tags: environment }
     - { role: docker, tags: docker }
 
 - hosts: master

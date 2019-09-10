@@ -1,6 +1,8 @@
 ---
+
 - name: "Create tmp directory"
-  file:
+  file:- name: Copy optimizer server shell file
+  copy:
     path: "{{ tmp_dir }}"
     state: directory
     mode: 0755

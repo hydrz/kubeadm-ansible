@@ -1,4 +1,5 @@
 ---
+
 - name: Deploy kubernetes dashboard into cluster
   when: init_cluster and started_kubelet and enable_dashboard
   command: |

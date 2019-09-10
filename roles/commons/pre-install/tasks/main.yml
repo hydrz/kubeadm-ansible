@@ -1,7 +1,8 @@
 ---
 
-- name: Install Kubernetes packages
+- name: Init Kubernetes packages
   include_tasks: pkg.yml
+  run_once: yes
 
 - name: Disable system swap
   shell: "swapoff -a"

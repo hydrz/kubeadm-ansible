@@ -13,6 +13,14 @@
     state: present
     filename: 'kubernetes'
 
+- name: Install kubernetes packages (Debian/Ubuntu)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ item }}-{{ kube_version | replace('v', '') }}"
+    update_cache: yes
+    state: installed
+  with_items: "{{ pkgs }}"
+
 - name: Add Kubernetes yum repository
   when: ansible_os_family == "RedHat"
   yum_repository:
@@ -26,14 +34,6 @@
 - name: Install kubernetes packages (RHEL/CentOS)
   when: ansible_os_family == "RedHat"
   yum:
-    name: "{{ item }}-{{ kube_version | replace('v', '') }}"
-    update_cache: yes
-    state: installed
-  with_items: "{{ pkgs }}"
-
-- name: Install kubernetes packages (Debian/Ubuntu)
-  when: ansible_os_family == "Debian"
-  apt:
     name: "{{ item }}-{{ kube_version | replace('v', '') }}"
     update_cache: yes
     state: installed
