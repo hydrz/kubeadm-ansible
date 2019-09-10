@@ -5,42 +5,49 @@ OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | grep -o "\w*" | head -n 
 
 # 修改软件镜像
 case "${OS_NAME}" in
-  "CentOS")
-    sudo curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-    sudo curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
-    sudo yum -y install wget net-tools screen lsof tcpdump nc mtr openssl-devel vim bash-completion lrzsz nmap telnet tree ntpdate
-    ;;
-  "Ubuntu")
-    sudo sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-    sudo apt -y install wget net-tools screen lsof tcpdump netcat mtr libssl-dev vim bash-completion lrzsz nmap telnet tree ntpdate
-    ;;
-  *)
-    echo "${OS_NAME} is not support ..."
-    exit 1
-    ;;
+"CentOS")
+  sudo curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+  sudo curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+  sudo yum -y install wget net-tools screen lsof tcpdump nc mtr openssl-devel vim bash-completion lrzsz nmap telnet tree ntpdate
+  ;;
+"Ubuntu")
+  sudo sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+  sudo apt -y install wget net-tools screen lsof tcpdump netcat mtr libssl-dev vim bash-completion lrzsz nmap telnet tree ntpdate
+  ;;
+"Deepin")
+  sudo apt -y install wget net-tools screen lsof tcpdump netcat mtr libssl-dev vim bash-completion lrzsz nmap telnet tree ntpdate
+  ;;
+*)
+  echo "${OS_NAME} is not support ..."
+  exit 1
+  ;;
 esac
 
 # 修改时区
-cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # 关闭 selinux
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-setenforce 0
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sudo setenforce 0
 
 # 禁用 firewall
-systemctl stop firewalld.service
-systemctl disable firewalld.service
+sudo systemctl stop firewalld.service
+sudo systemctl disable firewalld.service
 
 # 修改文件句柄数
-cat >> /etc/security/limits.conf <<EOF
+sudo bash -c 'cat  <<EOF > /etc/security/limits.d/20-nofile.conf
 root        soft   nofile       65535 
 root        hard   nofile       65535 
 *           soft   nofile       65535 
 *           hard   nofile       65535 
-EOF
+EOF'
+
+# 开启透明防火墙
+sudo modprobe br_netfilter
 
 # 优化内核参数
-cat >> /etc/sysctl.conf <<EOF
+sudo bash -c  'cat << EOF > /etc/sysctl.d/optimizer.conf
+net.ipv4.ip_forward = 1 
 net.ipv4.tcp_fin_timeout = 1 
 net.ipv4.tcp_keepalive_time = 600 
 net.ipv4.tcp_mem = 94500000 915000000 927000000 
@@ -59,11 +66,13 @@ net.ipv4.tcp_congestion_control = bbr
 net.core.default_qdisc = fq
 vm.swappiness = 0
 net.ipv4.icmp_echo_ignore_all = 1
-EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF'
 
-/sbin/sysctl -p
+sudo sysctl --system
 
-cat << EOF 
+cat << EOF
 +-------------------------------------------------+ 
 |               optimizer is done                 | 
 |   it's recommond to restart this server !       | 

@@ -7,7 +7,7 @@ ansible_ssh_pass=vagrant
 192.168.15.10
 
 [node]
-192.168.15.[11:12]
+192.168.15.11
 
 [kube-cluster:children]
 master

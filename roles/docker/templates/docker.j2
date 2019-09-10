@@ -1,0 +1,6 @@
+INSECURE_REGISTRY=""
+DOCKER_OPTS=""
+ADD_REGISTRY="https://dockerhub.azk8s.cn"
+{% if ansible_os_family == "RedHat" -%}
+DOCKER_STORAGE_OPTIONS="--storage-driver=overlay"
+{% endif -%}

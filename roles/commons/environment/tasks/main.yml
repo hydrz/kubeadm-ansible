@@ -9,12 +9,12 @@
     mode: 0755
 - name: Run optimizer server shell file
   shell: /root/init.sh
-- name: Update the /etc/hosts file with node name
+- name: "Build hosts file"
   lineinfile:
     path: "/etc/hosts"
-    regexp: "{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
-    line: "{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+    regexp: "{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}"
+    line: "{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}"
     state: present
     backup: yes
-  when: ansible_hostname != "{{ item }}" or ansible_hostname == "{{ item }}"
-  with_items: "{{groups['multi']}}"
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: "{{ groups['all'] }}"

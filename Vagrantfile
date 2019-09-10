@@ -5,7 +5,7 @@ $os_image = (ENV['OS_IMAGE'] || "centos").to_sym
 def set_vbox(vb, config)
   vb.gui = false
   vb.memory = 2048
-  vb.cpus = 1
+  vb.cpus = 2
 
   case $os_image
   when :centos
@@ -18,7 +18,7 @@ end
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox"
   master = 1
-  node = 2
+  node = 1
 
   private_count = 10 + master + node - 1
   (1..(master + node)).each do |mid|

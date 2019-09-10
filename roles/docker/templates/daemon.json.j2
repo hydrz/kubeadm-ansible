@@ -4,9 +4,11 @@
     "log-opts": {
       "max-size": "100m"
     },
+    {% if ansible_os_family == "RedHat" -%}
     "storage-driver": "overlay2",
     "storage-opts": [
       "overlay2.override_kernel_check=true"
     ],
+    {% endif -%}
     "registry-mirrors": ["https://dockerhub.azk8s.cn"]
   }

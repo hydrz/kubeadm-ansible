@@ -1,19 +1,18 @@
 ---
-
 - name: Install Docker container engine
-  shell: curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+  include_tasks: pkg.yml
 
 - name: Create Docker config directory
   file:
-    path: "/etc/docker"
+    path: "/etc/docker/"
     state: directory
 
-- name: Copy Docker engine service file
+- name: Copy Docker config file
   template:
     src: "daemon.json.j2"
     dest: "/etc/docker/daemon.json"
 
-- name: Create Docker service config directory
+- name: Create Docker config directory
   file:
     path: "/etc/systemd/system/docker.service.d"
     state: directory

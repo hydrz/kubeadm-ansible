@@ -15,15 +15,6 @@
     backrefs: yes
     state: present
 
-- name: Disable swappiness and pass bridged IPv4 traffic to iptable's chains
-  sysctl:
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
-    state: present
-  with_items:
-    - { name: 'vm.swappiness', value: '0' }
-    - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }
-
 - name: Create service drop-in directory
   file:
     path: /etc/systemd/system/kubelet.service.d/
