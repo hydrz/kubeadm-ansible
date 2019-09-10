@@ -25,7 +25,7 @@ network: flannel
 # For example, on DigitalOcean, you would use eth1 as that is the default private network interface.
 network_interface: "eth1"
 
-enable_dashboard: no
+enable_dashboard: yes
 
 systemd_dir: /lib/systemd/system
 system_env_dir: /etc/sysconfig

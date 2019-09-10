@@ -26,12 +26,6 @@
                  {{ init_opts }}
   register: init_cluster
 
-- name: Control plane node unisolation
-  when: init_cluster is succeeded
-  shell: |
-    kubectl taint nodes --all node-role.kubernetes.io/master-
-  register: master_unisolation
-
 - name: Create Kubernetes config directory
   file:
     path: ".kube/"
@@ -47,11 +41,17 @@
     mode: 0755
     remote_src: true
 
+- name: Control plane node unisolation
+  when: init_cluster is succeeded
+  shell: |
+    kubectl taint nodes --all node-role.kubernetes.io/master-
+  register: master_unisolation
+
 - name: Deploy kubernetes dashboard into cluster
   when: init_cluster is succeeded and enable_dashboard
   command: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-        apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+        apply -f https://gist.githubusercontent.com/hydrz/b22bffd14df2aefcefa3b599184aae71/raw/1be54a45a6750da09ae845c1ca05855b88a95d9d/kubernetes-dashboard-v1.10.1.yaml
   register: create_result
   until: create_result.rc == 0
   retries: 5
